@@ -26,6 +26,9 @@ class TropicalValue(object):
     def __str__(self):
         return str(self.value)
 
+    def __hash__(self):
+        return id(self)
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.value == other.value

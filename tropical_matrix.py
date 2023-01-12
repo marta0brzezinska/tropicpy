@@ -57,16 +57,19 @@ class TropicalMatrix():
         return result
 
     def __eq__(self, other):
-        if self.rows != other.rows:
-            return False
-        elif self.columns != other.columns:
-            return False
+        if isinstance(other,TropicalMatrix):
+            if self.rows != other.rows:
+                return False
+            elif self.columns != other.columns:
+                return False
 
-        for (row_a, row_b) in zip(self.values, other.values):
-            for (a, b) in zip(row_a, row_b):
-                if a != b:
-                    return False
-        return True
+            for (row_a, row_b) in zip(self.values, other.values):
+                for (a, b) in zip(row_a, row_b):
+                    if a != b:
+                        return False
+            return True
+        else:
+            return False
 
     def __ne__(self, other):
         return not self.__eq__(other)

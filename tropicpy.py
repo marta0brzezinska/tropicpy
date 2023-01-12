@@ -3,6 +3,7 @@
 
 """
 from grigorie_shpilrain_2014 import *
+from grigorie_shpilrain_2019 import *
 
 
 def tropical_demo():
@@ -56,7 +57,7 @@ def tropical_demo():
     print("=")
     print(e * f)
 
-tropical_demo()
+#tropical_demo()
 
 def grigorie_shpilrain_2014_demo():
     print("Example of Grigorie-Shpilrain (2014) protocol:")
@@ -80,8 +81,8 @@ def grigorie_shpilrain_2014_demo():
     u = Alice.send_message()
     v = Bob.send_message()
 
-    print("u \n= \n" + str(u))
-    print("v \n= \n" + str(v))
+    print("u = \n" + str(u))
+    print("v = \n" + str(v))
 
     Alice.set_Key(v)
     Bob.set_Key(u)
@@ -91,6 +92,7 @@ def grigorie_shpilrain_2014_demo():
     else:
         print("Something went wrong!")
 
+#grigorie_shpilrain_2014_demo()
 
 def kotov_ushakov_simple_demo():
     print("Example of Kotov-Ushakov Simple attack:")
@@ -112,11 +114,91 @@ def kotov_ushakov_simple_demo():
     Bob = GrigorieShpilrain2014(A, B, g)
     V = Bob.send_message()
 
+    Alice.set_Key(V)
+
     attack_K = kotov_ushakov_simple(A,B,g,U,V)
 
-    if attack_K == Alice.get_Key():
+    if Alice.check_Key(attack_K):
         print("Key was found!")
+        print("K = \n" + str(attack_K))
     else:
         print("Key doesn't match..")
 
 #kotov_ushakov_simple_demo()
+
+def kotov_ushakov_demo():
+    print("Example of Kotov-Ushakov attack:")
+
+    n=3
+
+    A = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
+    B = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
+
+    g=6
+
+    print("Parameters:")
+    print("A = \n" + str(A))
+    print("B = \n" + str(B))
+    print("g = " + str(g))
+
+    Alice = GrigorieShpilrain2014(A,B,g)
+    U = Alice.send_message()
+    Bob = GrigorieShpilrain2014(A, B, g)
+    V = Bob.send_message()
+
+    Alice.set_Key(V)
+
+    attack_K = kotov_ushakov(A,B,g,U,V)
+
+    if Alice.check_Key(attack_K):
+        print("Key was found!")
+        print("K = \n" + str(attack_K))
+    else:
+        print("Key doesn't match..")
+
+kotov_ushakov_demo()
+
+def grigorie_shpilrain_2019_demo():
+    print("Example of Grigorie-Shpilrain (2019) protocol:")
+
+    n = 3
+    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+
+    g = 6
+
+    print("Parameters:")
+    print("A = \n" + str(A))
+    print("B = \n" + str(B))
+    print("g = " + str(g))
+
+    Alice = GrigorieShpilrain2019(A, B, g)
+    Bob = GrigorieShpilrain2019(A, B, g)
+
+    print("n = " + str(Alice.n))
+
+    u = Alice.send_message()
+    v = Bob.send_message()
+
+    print("u = \n" + str(u))
+    print("v = \n" + str(v))
+
+    Alice.set_Key(v)
+    Bob.set_Key(u)
+
+    #TODO: sprawdzanie zgodności klucza dla 2 protokołów
+    if Alice.check_Key(Bob):
+        print("Alice and Bob share a secret!")
+    else:
+        print("Something went wrong!")
+
+#grigorie_shpilrain_2019_demo()
+
+#TODO: rudy_monico_demo()
+#rudy_monico_demo()
+
+#TODO: isaac_kahrobae_demo()
+#isaac_kahrobae_demo()
+
+#TODO: muanalifah_sergeev_demo()
+#muanalifah_sergeev_demo()

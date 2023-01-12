@@ -50,23 +50,21 @@ class GrigorieShpilrain2014():
         self.m = self._p_1_A * self._p_2_B
         return self.m
 
-    def get_message(self):
-        return self.m
-
     def set_Key(self, v):
         self._K = self._p_1_A * v * self._p_2_B
 
-    def get_Key(self):
-        return self._K
+    def check_Key(self, check_K):
+        return check_K == self._K
 
 
-def value_difference(a,b):
+def value_difference(a, b):
     if b == tropical_0:
         return False
     elif a == tropical_0:
         return tropical_0
     else:
-        return a.value - b.value
+        return TropicalValue(a.value - b.value, a.is_int and b.is_int)
+
 
 def is_matrix_difference_constant(A, B):
     frst = True
@@ -74,33 +72,71 @@ def is_matrix_difference_constant(A, B):
         for (a, b) in zip(row_a, row_b):
             if frst:
                 frst = False
-                c = value_difference(a,b)
+                c = value_difference(a, b)
                 if not c:
                     continue
             else:
-                new_c = value_difference(a,b)
+                new_c = value_difference(a, b)
                 if new_c:
                     if new_c != c:
                         return False
                     else:
-                        c=new_c
+                        c = new_c
     return c
 
 
 def kotov_ushakov_simple(A, B, g, U, V):
-    for i in range(g+1,1,-1):
-        for j in range(g+1,1,-1):
-            c=is_matrix_difference_constant(U,(A ** i) * (B ** j))
+    for i in range(g + 1):
+        for j in range(g + 1):
+            c = is_matrix_difference_constant(U, (A ** i) * (B ** j))
             if c:
                 print("Attack was succesfull!")
-                print("T=")
-                print((A ** i) * (B ** j))
-                print("U =\n" + str(U))
                 print("c = " + str(c))
                 print("i = " + str(i))
                 print("j = " + str(j))
-                c = TropicalValue(c,True)
 
                 return ((A ** i) * c) * V * (B ** j)
     return False
 
+def min_of_matrix_difference(A,B):
+    result = {}
+    t = tropical_0
+    P = []
+    for (row_a, row_b, i) in zip(A.values, B.values, range(A.rows)):
+        for (a, b, j) in zip(row_a, row_b, range(A.columns)):
+            c = value_difference(a, b)
+            if t == c:
+                P. append([i,j])
+            elif t + c == c:
+                t += c
+                P = []
+                P.append([i, j])
+    result[t] = P
+    return result
+
+def check_cover(main_set, dict_of_sets, cover):
+    if dict_of_sets == {}:
+        return False
+    elif len(set(cover)) == len(main_set):
+        return cover
+    else:
+        for t in dict_of_sets:
+            tmp_dict = dict_of_sets.copy()
+            tmp_dict.pop(t)
+            cover[t]=dict_of_sets[t]
+            return check_cover(main_set,tmp_dict,cover)
+
+def kotov_ushakov(A, B, g, U, V):
+    result = {}
+    n = A.rows
+    for i in range(g+1):
+        for j in range(g+1):
+            result.update(min_of_matrix_difference((A ** i) * (B ** j),U))
+    S = [[i,j] for i in range(n) for j in range(n)]
+    for t in result:
+        #TODO: znaleźć minimalne pokrycia S
+        C = check_cover(S,result,dict([(t,result[t])]))
+        print("cover:")
+        for c in C:
+            print(C[c])
+    return False
