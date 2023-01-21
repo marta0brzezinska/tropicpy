@@ -57,6 +57,25 @@ def tropical_demo():
     print("=")
     print(e * f)
 
+    print("c) power")
+    print(e)
+    print("** 4\n=")
+    print(e ** 4)
+
+    print("d) adjoint multiplication:")
+
+    print(e)
+    print("@")
+    print(f)
+    print("=")
+    print(e @ f)
+
+    print("e) adjoint power")
+    print(e)
+    print("^3\n=")
+    print(e ^ 3)
+
+
 #tropical_demo()
 
 def grigorie_shpilrain_2014_demo():
@@ -156,43 +175,39 @@ def kotov_ushakov_demo():
     else:
         print("Key doesn't match..")
 
-kotov_ushakov_demo()
+#kotov_ushakov_demo()
 
 def grigorie_shpilrain_2019_demo():
     print("Example of Grigorie-Shpilrain (2019) protocol:")
 
-    n = 3
-    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
-    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
-
-    g = 6
+    k = 3
+    M = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
+    H = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
 
     print("Parameters:")
+    print("M = \n" + str(M))
+    print("H = \n" + str(H))
+
+    Alice = GrigorieShpilrain2019(M, H)
+    Bob = GrigorieShpilrain2019(M, H)
+
+    print("k = " + str(Alice.k))
+
+    A = Alice.send_message()
+    B = Bob.send_message()
+
     print("A = \n" + str(A))
     print("B = \n" + str(B))
-    print("g = " + str(g))
 
-    Alice = GrigorieShpilrain2019(A, B, g)
-    Bob = GrigorieShpilrain2019(A, B, g)
+    Alice.set_Key(B)
+    Bob.set_Key(A)
 
-    print("n = " + str(Alice.n))
-
-    u = Alice.send_message()
-    v = Bob.send_message()
-
-    print("u = \n" + str(u))
-    print("v = \n" + str(v))
-
-    Alice.set_Key(v)
-    Bob.set_Key(u)
-
-    #TODO: sprawdzanie zgodności klucza dla 2 protokołów
-    if Alice.check_Key(Bob):
+    if Alice.check_Key(Bob.get_Key()):
         print("Alice and Bob share a secret!")
     else:
         print("Something went wrong!")
 
-#grigorie_shpilrain_2019_demo()
+grigorie_shpilrain_2019_demo()
 
 #TODO: rudy_monico_demo()
 #rudy_monico_demo()

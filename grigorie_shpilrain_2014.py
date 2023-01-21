@@ -53,6 +53,9 @@ class GrigorieShpilrain2014():
     def set_Key(self, v):
         self._K = self._p_1_A * v * self._p_2_B
 
+    def get_Key(self):
+        return self._K
+
     def check_Key(self, check_K):
         return check_K == self._K
 

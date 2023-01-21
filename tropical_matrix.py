@@ -57,7 +57,7 @@ class TropicalMatrix():
         return result
 
     def __eq__(self, other):
-        if isinstance(other,TropicalMatrix):
+        if isinstance(other, TropicalMatrix):
             if self.rows != other.rows:
                 return False
             elif self.columns != other.columns:
@@ -120,14 +120,39 @@ class TropicalMatrix():
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, int):
-            if power == 0:
-                return tropical_matrix_1(self.rows)
-            result = self
-            for i in range(power - 1):
-                result *= self
-            return result
+            if power == 1:
+                return self
+            elif power % 2 == 0:
+                return (self * self) ** (power >> 1)
+            else:
+                return self * ((self * self) ** ((power - 1) >> 1))
         else:
             raise Exception(str(power) + " is not an accurate power.")
+
+    def __matmul__(self, other):
+        if isinstance(other, TropicalMatrix):
+            return self + other + (self * other)
+        else:
+            raise Exception("Cannot perform adjoint multiplication for type: " + str(type(other)))
+
+    def __xor__(self, power):
+        if power == 1:
+            return self
+        elif power % 2 == 0:
+            return (self @ self) ^ (power >> 1)
+        else:
+            return self @ ((self @ self) ^ ((power - 1) >> 1))
+
+
+
+def semidirect_product(A, B, C, D):
+    return (A @ D) + C, B @ D
+
+
+def semidirect_power(A, B, n):
+    I = tropical_matrix_1(A.rows)
+    result = ((A * (I + B)) + B) * ((I + B) ** (n-2))
+    return result, B ^ n
 
 
 def tropical_matrix_0(n):
@@ -154,4 +179,3 @@ def generate_random_tropical_matrix(n, l, u, isint):
             tmp_row.append(TropicalValue(random.randint(l, u), isint))
         values.append(tmp_row)
     return TropicalMatrix(values, True)
-
