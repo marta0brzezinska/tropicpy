@@ -2,7 +2,7 @@
 
 
 """
-from tropical_matrix import *
+from tropical.tropical_matrix import *
 
 
 class GrigorieShpilrain2019():
@@ -31,9 +31,8 @@ class GrigorieShpilrain2019():
             self._K = None
 
     def send_message(self):
-        tmp_product = semidirect_power(self.M, self.H, self.m)
-        self.A = tmp_product[0]
-        self.Hm = tmp_product[1]
+        self.A = semidirect_power_1st(self.M, self.H, self.m)
+        self.Hm = semidirect_power_2nd(self.M, self.H, self.m)
         return self.A
 
     def set_Key(self, B):
@@ -45,8 +44,32 @@ class GrigorieShpilrain2019():
     def check_Key(self, check_K):
         return check_K == self._K
 
-# TODO: implementacja ataku rudy_monico()
+def grigorie_shpilrain_2019_demo():
+    print("Example of Grigorie-Shpilrain (2019) protocol:")
 
-# TODO: implementacja ataku isaac_kahrobae()
+    k = 3
+    M = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
+    H = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
 
-# TODO: implementacja ataku muanalifah_sergeev()
+    print("Parameters:")
+    print("M = \n" + str(M))
+    print("H = \n" + str(H))
+
+    Alice = GrigorieShpilrain2019(M, H)
+    Bob = GrigorieShpilrain2019(M, H)
+
+    print("k = " + str(Alice.k))
+
+    A = Alice.send_message()
+    B = Bob.send_message()
+
+    print("A = \n" + str(A))
+    print("B = \n" + str(B))
+
+    Alice.set_Key(B)
+    Bob.set_Key(A)
+
+    if Alice.check_Key(Bob.get_Key()):
+        print("Alice and Bob share a secret!")
+    else:
+        print("Something went wrong!")

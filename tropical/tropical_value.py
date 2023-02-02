@@ -2,7 +2,7 @@
 
 
 """
-from utils import *
+from tropical.tropical_utils import *
 
 inf = "inf"
 

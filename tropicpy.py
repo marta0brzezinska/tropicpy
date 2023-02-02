@@ -2,140 +2,97 @@
 
 
 """
-from grigorie_shpilrain_2014 import *
-from grigorie_shpilrain_2019 import *
 
+from attacks.kotov_ushakov_simple import *
+from attacks.kotov_ushakov import *
+from attacks.rudy_monico import *
+from attacks.isaac_kahrobaei import *
+from attacks.muanalifah_sergeev import *
 
-def tropical_demo():
-    print("In tropical algebra we have:")
-
-    print("0 = " + str(tropical_0))
-    print("1 = " + str(tropical_1))
-
-    print("0(3x3) \n=\n" + str(tropical_matrix_0(3)))
-    print("1(3x3) \n=\n" + str(tropical_matrix_1(3)))
-
-    print("Examples of tropical operations:")
-
-    a = TropicalValue(9)
-    b = TropicalValue(inf)
-
-    print("a) addition:")
-    print(a, end="")
-    print("+", end="")
-    print(b, end="")
-    print("=", end="")
-    print(a + b)
-
-    c = TropicalValue(2, True)
-    d = TropicalValue(3, True)
-
-    print("b) multiplication:")
-    print(c, end="")
-    print("*", end="")
-    print(d, end="")
-    print("=", end="")
-    print(c * d)
-
-    print("Examples of operations on tropical matrices:")
-
-    e = TropicalMatrix([[1, 2], [5, -1]], isint=True)
-    f = TropicalMatrix([[0, 3], [2, 8]])
-
-    print("a) addition:")
-    print(e)
-    print("+")
-    print(f)
-    print("=")
-    print(e + f)
-
-    print("b) multiplication:")
-
-    print(e)
-    print("*")
-    print(f)
-    print("=")
-    print(e * f)
-
-    print("c) power")
-    print(e)
-    print("** 4\n=")
-    print(e ** 4)
-
-    print("d) adjoint multiplication:")
-
-    print(e)
-    print("@")
-    print(f)
-    print("=")
-    print(e @ f)
-
-    print("e) adjoint power")
-    print(e)
-    print("^3\n=")
-    print(e ^ 3)
-
-
-#tropical_demo()
-
-def grigorie_shpilrain_2014_demo():
-    print("Example of Grigorie-Shpilrain (2014) protocol:")
+#TODO: sprawdzić parametry protokołów w protocol_demo i attack_demo
+def protocol_demo(protocol):
+    print("Example of " + protocol.__name__ + " protocol:")
 
     n = 3
-    A = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
-    B = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
-
-    g=6
+    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
 
     print("Parameters:")
     print("A = \n" + str(A))
     print("B = \n" + str(B))
-    print("g = " + str(g))
 
-    Alice = GrigorieShpilrain2014(A, B, g)
-    Bob = GrigorieShpilrain2014(A, B, g)
+    Alice = None
+    Bob = None
 
-    print("n = " + str(Alice.n))
+    if protocol == GrigorieShpilrain2014:
+        g = 6
+        print("g = " + str(g))
 
-    u = Alice.send_message()
-    v = Bob.send_message()
+        Alice = protocol(A, B, g)
+        Bob = protocol(A, B, g)
 
-    print("u = \n" + str(u))
-    print("v = \n" + str(v))
+        print("n = " + str(Alice.n))
+    elif protocol == GrigorieShpilrain2019:
+        Alice = protocol(A, B)
+        Bob = protocol(A, B)
 
-    Alice.set_Key(v)
-    Bob.set_Key(u)
+        print("k = " + str(Alice.k))
+
+    U = Alice.send_message()
+    V = Bob.send_message()
+
+    print("Alice's message: \n" + str(U))
+    print("Bob's message: \n" + str(V))
+
+    Alice.set_Key(V)
+    Bob.set_Key(U)
 
     if Alice.get_Key() == Bob.get_Key():
         print("Alice and Bob share a secret!")
     else:
         print("Something went wrong!")
 
-#grigorie_shpilrain_2014_demo()
+#TODO: return False if attack unsuccesfull
+def attack_demo(protocol, attack):
+    print("Example of " + attack.__name__ + " attack:")
 
-def kotov_ushakov_simple_demo():
-    print("Example of Kotov-Ushakov Simple attack:")
+    n = 3
 
-    n=3
-
-    A = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
-    B = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
-
-    g=6
+    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
 
     print("Parameters:")
     print("A = \n" + str(A))
     print("B = \n" + str(B))
-    print("g = " + str(g))
 
-    Alice = GrigorieShpilrain2014(A,B,g)
+    Alice = None
+    Bob = None
+
+    if protocol == GrigorieShpilrain2014:
+        g = 6
+        print("g = " + str(g))
+
+        Alice = protocol(A, B, g)
+        Bob = protocol(A, B, g)
+
+        print("n = " + str(Alice.n))
+    elif protocol == GrigorieShpilrain2019:
+        Alice = protocol(A, B)
+        Bob = protocol(A, B)
+
+        print("k = " + str(Alice.k))
+
     U = Alice.send_message()
-    Bob = GrigorieShpilrain2014(A, B, g)
     V = Bob.send_message()
 
     Alice.set_Key(V)
 
-    attack_K = kotov_ushakov_simple(A,B,g,U,V)
+    attack_K = None
+
+    if protocol == GrigorieShpilrain2014:
+        attack_K = attack(A, B, g, U, V)
+    elif protocol == GrigorieShpilrain2019:
+        attack_K = attack(A, B, U, V)
 
     if Alice.check_Key(attack_K):
         print("Key was found!")
@@ -143,77 +100,78 @@ def kotov_ushakov_simple_demo():
     else:
         print("Key doesn't match..")
 
-#kotov_ushakov_simple_demo()
+def tropicpy_demo():
+    protocol = None
+    attack = None
 
-def kotov_ushakov_demo():
-    print("Example of Kotov-Ushakov attack:")
+    print("What do you want to see?")
+    print("1. Tropical algebra examples")
+    print("2. Grigorie-Shpilrain (2014) protocol")
+    print("3. Grigorie-Shpilrain (2019) protocol")
 
-    n=3
+    ans1 = input()
 
-    A = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
-    B = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
+    try:
+        ans1 = int(ans1)
 
-    g=6
+        if ans1 == 1:
+            tropical_demo()
+        elif ans1 == 2:
+            protocol = GrigorieShpilrain2014
 
-    print("Parameters:")
-    print("A = \n" + str(A))
-    print("B = \n" + str(B))
-    print("g = " + str(g))
+            print("What attack do you want to see?")
+            print("1. Kotov-Ushakov Simple")
+            print("2. Kotov-Ushakov")
+            print("3. None, just the protocol")
 
-    Alice = GrigorieShpilrain2014(A,B,g)
-    U = Alice.send_message()
-    Bob = GrigorieShpilrain2014(A, B, g)
-    V = Bob.send_message()
+            ans2 = input()
 
-    Alice.set_Key(V)
+            try:
+                ans2 = int(ans2)
 
-    attack_K = kotov_ushakov(A,B,g,U,V)
+                if ans2 == 1:
+                    attack = kotov_ushakov_simple
+                elif ans2 == 2:
+                    attack = kotov_ushakov
+                else:
+                    attack = None
+            except:
+                print("Not a number.")
 
-    if Alice.check_Key(attack_K):
-        print("Key was found!")
-        print("K = \n" + str(attack_K))
-    else:
-        print("Key doesn't match..")
+        elif ans1 == 3:
+            protocol = GrigorieShpilrain2019
 
-#kotov_ushakov_demo()
+            print("What attack do you want to see?")
+            print("1. Rudy-Monico")
+            print("2. Isaac-Kahrobaei")
+            print("3. Muanalifah-Sergeev")
+            print("4. None, just the protocol")
 
-def grigorie_shpilrain_2019_demo():
-    print("Example of Grigorie-Shpilrain (2019) protocol:")
+            ans3 = input()
+            try:
+                ans3 = int(ans3)
 
-    k = 3
-    M = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
-    H = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
+                if ans3 == 1:
+                    attack = rudy_monico
+                elif ans3 == 2:
+                    attack = isaac_kahrobaei
+                elif ans3 == 3:
+                    attack = muanalifah_sergeev
+                else:
+                    attack = None
+            except:
+                print("Not a number.")
 
-    print("Parameters:")
-    print("M = \n" + str(M))
-    print("H = \n" + str(H))
+        else:
+            print("Nothing to show.")
+            return 0
+    except:
+        print("Not a number.")
 
-    Alice = GrigorieShpilrain2019(M, H)
-    Bob = GrigorieShpilrain2019(M, H)
+    if attack != None and protocol != None:
+        attack_demo(protocol,attack)
+    elif protocol != None:
+        protocol_demo(protocol)
 
-    print("k = " + str(Alice.k))
-
-    A = Alice.send_message()
-    B = Bob.send_message()
-
-    print("A = \n" + str(A))
-    print("B = \n" + str(B))
-
-    Alice.set_Key(B)
-    Bob.set_Key(A)
-
-    if Alice.check_Key(Bob.get_Key()):
-        print("Alice and Bob share a secret!")
-    else:
-        print("Something went wrong!")
-
-grigorie_shpilrain_2019_demo()
-
-#TODO: rudy_monico_demo()
-#rudy_monico_demo()
-
-#TODO: isaac_kahrobae_demo()
-#isaac_kahrobae_demo()
-
-#TODO: muanalifah_sergeev_demo()
-#muanalifah_sergeev_demo()
+if __name__ == "__main__":
+    tropicpy_demo()

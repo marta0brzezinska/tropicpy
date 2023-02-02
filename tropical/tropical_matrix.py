@@ -3,7 +3,7 @@
 
 """
 
-from tropical_value import *
+from tropical.tropical_value import *
 import random
 
 
@@ -74,6 +74,12 @@ class TropicalMatrix():
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __le__(self, other):
+        if self + other == self:
+            return True
+        else:
+            return False
+
     def __add__(self, other):
         if self.rows != other.rows or self.columns != other.columns:
             raise Exception("Different dimensions of matrices.")
@@ -120,7 +126,9 @@ class TropicalMatrix():
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, int):
-            if power == 1:
+            if power == 0:
+                return tropical_matrix_1(self.rows)
+            elif power == 1:
                 return self
             elif power % 2 == 0:
                 return (self * self) ** (power >> 1)
@@ -144,15 +152,24 @@ class TropicalMatrix():
             return self @ ((self @ self) ^ ((power - 1) >> 1))
 
 
+def semidirect_product_1st(A, B, C, D):
+    return (A @ D) + C
 
-def semidirect_product(A, B, C, D):
-    return (A @ D) + C, B @ D
+
+def semidirect_product_2nd(A, B, C, D):
+    return B @ D
+
+#todo: square-and-multiply method?
+def semidirect_power_1st(A, B, n):
+    if n == 1:
+        return A
+    else:
+        I = tropical_matrix_1(A.rows)
+        return ((A * (I + B)) + B) * ((I + B) ** (n - 2))
 
 
-def semidirect_power(A, B, n):
-    I = tropical_matrix_1(A.rows)
-    result = ((A * (I + B)) + B) * ((I + B) ** (n-2))
-    return result, B ^ n
+def semidirect_power_2nd(A, B, n):
+    return B ^ n
 
 
 def tropical_matrix_0(n):
@@ -179,3 +196,73 @@ def generate_random_tropical_matrix(n, l, u, isint):
             tmp_row.append(TropicalValue(random.randint(l, u), isint))
         values.append(tmp_row)
     return TropicalMatrix(values, True)
+
+
+def tropical_demo():
+    print("In tropical algebra we have:")
+
+    print("0 = " + str(tropical_0))
+    print("1 = " + str(tropical_1))
+
+    print("0(3x3) \n=\n" + str(tropical_matrix_0(3)))
+    print("1(3x3) \n=\n" + str(tropical_matrix_1(3)))
+
+    print("Examples of tropical operations:")
+
+    a = TropicalValue(9)
+    b = TropicalValue(inf)
+
+    print("a) addition:")
+    print(a, end="")
+    print("+", end="")
+    print(b, end="")
+    print("=", end="")
+    print(a + b)
+
+    c = TropicalValue(2, True)
+    d = TropicalValue(3, True)
+
+    print("b) multiplication:")
+    print(c, end="")
+    print("*", end="")
+    print(d, end="")
+    print("=", end="")
+    print(c * d)
+
+    print("Examples of operations on tropical matrices:")
+
+    e = TropicalMatrix([[1, 2], [5, -1]], isint=True)
+    f = TropicalMatrix([[0, 3], [2, 8]])
+
+    print("a) addition:")
+    print(e)
+    print("+")
+    print(f)
+    print("=")
+    print(e + f)
+
+    print("b) multiplication:")
+
+    print(e)
+    print("*")
+    print(f)
+    print("=")
+    print(e * f)
+
+    print("c) power")
+    print(e)
+    print("** 4\n=")
+    print(e ** 4)
+
+    print("d) adjoint multiplication:")
+
+    print(e)
+    print("@")
+    print(f)
+    print("=")
+    print(e @ f)
+
+    print("e) adjoint power")
+    print(e)
+    print("^3\n=")
+    print(e ^ 3)
