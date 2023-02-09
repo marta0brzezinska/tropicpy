@@ -36,8 +36,11 @@ def double_matrix_sum(A,B):
 
     return TropicalMatrix(result, tmp_isint)
 
-def matrix_sum(matrix_table):
-    R = matrix_table[0]
+#TODO: test for >2 matrices
+def matrix_sum(matrix_table, n=None):
+    if matrix_table == []:
+        return TropicalMatrix([[0]*n]*n)
+    R = matrix_table[-1]
     matrix_table.pop()
     for M in matrix_table:
         R = double_matrix_sum(R,M)
@@ -96,3 +99,9 @@ def check_cover(main_set, dict_of_sets, cover):
             tmp_dict.pop(t)
             cover[t]=dict_of_sets[t]
             return check_cover(main_set,tmp_dict,cover)
+
+
+def largest_tropical_eigenvalue(F):
+    #TODO: obliczenia
+    
+    return 0

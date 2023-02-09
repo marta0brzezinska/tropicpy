@@ -178,6 +178,14 @@ def tropical_matrix_0(n):
         values.append([tropical_0] * n)
     return TropicalMatrix(values)
 
+def kleene_star(F):
+    n = F.rows
+    result = tropical_matrix_1(n)
+    tmp_F = F
+    for i in range(1,n):
+        result += tmp_F
+        tmp_F *= tmp_F
+    return result
 
 def tropical_matrix_1(n):
     values = []
