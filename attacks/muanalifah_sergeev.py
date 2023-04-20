@@ -2,7 +2,7 @@
 
 
 """
-from attacks_utils import *
+from attacks.attacks_utils import *
 
 def muanalifah_sergeev(M,H,A,B):
     lmbda = largest_tropical_eigenvalue(H)

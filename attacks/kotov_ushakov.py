@@ -13,6 +13,7 @@ def kotov_ushakov(A, B, g, U, V):
             result.update(min_of_matrix_difference((A ** i) * (B ** j),U))
     S = [[i,j] for i in range(n) for j in range(n)]
     for t in result:
+        print(str(t) + ":" + str(result[t]))
         #TODO: znaleźć minimalne pokrycia S
         C = check_cover(S,result,dict([(t,result[t])]))
         print("cover:")

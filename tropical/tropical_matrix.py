@@ -195,13 +195,15 @@ def tropical_matrix_1(n):
         values.append(tmp_row)
     return TropicalMatrix(values)
 
+def generate_random_tropical_value(l,u,isint):
+    return TropicalValue(random.randint(l, u), isint)
 
 def generate_random_tropical_matrix(n, l, u, isint):
     values = []
     for i in range(n):
         tmp_row = []
         for j in range(n):
-            tmp_row.append(TropicalValue(random.randint(l, u), isint))
+            tmp_row.append(generate_random_tropical_value(l,u,isint))
         values.append(tmp_row)
     return TropicalMatrix(values, True)
 
@@ -217,30 +219,19 @@ def tropical_demo():
 
     print("Examples of tropical operations:")
 
-    a = TropicalValue(9)
-    b = TropicalValue(inf)
+    a = generate_random_tropical_value(-100, 100, False)
+    b = generate_random_tropical_value(-100, 100, False)
 
     print("a) addition:")
-    print(a, end="")
-    print("+", end="")
-    print(b, end="")
-    print("=", end="")
-    print(a + b)
-
-    c = TropicalValue(2, True)
-    d = TropicalValue(3, True)
+    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a+b))
 
     print("b) multiplication:")
-    print(c, end="")
-    print("*", end="")
-    print(d, end="")
-    print("=", end="")
-    print(c * d)
+    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a*b))
 
     print("Examples of operations on tropical matrices:")
 
-    e = TropicalMatrix([[1, 2], [5, -1]], isint=True)
-    f = TropicalMatrix([[0, 3], [2, 8]])
+    e = generate_random_tropical_matrix(3, -100, 100, True)
+    f = generate_random_tropical_matrix(3, -100, 100, False)
 
     print("a) addition:")
     print(e)
