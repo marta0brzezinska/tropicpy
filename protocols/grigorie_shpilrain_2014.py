@@ -7,7 +7,7 @@ from tropical.tropical_matrix import *
 
 class GrigorieShpilrain2014():
 
-    def __init__(self, A, B, g):
+    def __init__(self, A, B, g, p_min, p_max):
         if not isinstance(A, TropicalMatrix):
             raise Exception(str(A) + " is not an appropriate value.")
         elif not isinstance(B, TropicalMatrix):
@@ -27,16 +27,16 @@ class GrigorieShpilrain2014():
 
             tmp_p1 = []
             tmp_p2 = []
-            for i in range(g):
-                tmp_p1.extend([TropicalValue(random.randint(-1000, 1000), True)])
-                tmp_p2.extend([TropicalValue(random.randint(-1000, 1000), True)])
+            for i in range(g + 1):
+                tmp_p1.extend([generate_random_tropical_value(p_min, p_max, True)])
+                tmp_p2.extend([generate_random_tropical_value(p_min, p_max, True)])
 
             self._p1 = tmp_p1
             self._p2 = tmp_p2
 
             result1 = tropical_matrix_0(self.n)
             result2 = tropical_matrix_0(self.n)
-            for (el1, el2, i) in zip(self._p1, self._p2, range(self.g)):
+            for (el1, el2, i) in zip(self._p1, self._p2, range(self.g + 1)):
                 result1 += (self.A ** i) * el1
                 result2 += (self.B ** i) * el2
 
@@ -59,14 +59,15 @@ class GrigorieShpilrain2014():
     def check_Key(self, check_K):
         return check_K == self._K
 
+
 def grigorie_shpilrain_2014_demo():
     print("Example of Grigorie-Shpilrain (2014) protocol:")
 
     n = 3
-    A = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
-    B = generate_random_tropical_matrix(n,-10 ** 10,10 ** 10,True)
+    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
 
-    g=6
+    g = 6
 
     print("Parameters:")
     print("A = \n" + str(A))

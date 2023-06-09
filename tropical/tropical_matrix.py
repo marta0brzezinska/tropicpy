@@ -8,8 +8,7 @@ import random
 
 
 class TropicalMatrix():
-
-    def __init__(self, values, isint=False):
+    def __init__(self, values):
 
         tmp_rows = len(values)
         if tmp_rows == 0:
@@ -25,15 +24,14 @@ class TropicalMatrix():
         for (row, i) in zip(values, range(tmp_rows)):
             tmp_row = []
             for value in row:
-                if correct_tropical_value(value, isint):
-                    tmp_row.append(TropicalValue(value, isint))
-                elif isinstance(value, TropicalValue) and correct_tropical_value(value.value, isint):
+                if correct_tropical_value(value):
+                    tmp_row.append(TropicalValue(value))
+                elif isinstance(value, TropicalValue) and correct_tropical_value(value.value):
                     tmp_row.append(value)
                 else:
                     raise Exception(str(value) + " is not an accurate element of a tropical matrix.")
             tmp_values.append(tmp_row)
 
-        self.is_int = isint
         self.rows = tmp_rows
         self.columns = tmp_columns
         self.values = tmp_values
@@ -90,7 +88,7 @@ class TropicalMatrix():
             for (a, b) in zip(row_a, row_b):
                 tmp_row.append(a + b)
             result.append(tmp_row)
-        return TropicalMatrix(result, self.is_int and other.is_int)
+        return TropicalMatrix(result)
 
     def __mul__(self, other):
         if isinstance(other, TropicalMatrix):
@@ -112,17 +110,18 @@ class TropicalMatrix():
                         sum += el
                     tmp_row.append(sum)
                 result.append(tmp_row)
-            return TropicalMatrix(result, self.is_int and other.is_int)
+            return TropicalMatrix(result)
         elif isinstance(other, TropicalValue):
             result = []
-            tmp_isint = self.is_int and other.is_int
             for row in self.values:
                 tmp_row = []
                 for value in row:
                     tmp_row.append(other * value)
                 result.append(tmp_row)
 
-            return TropicalMatrix(result, tmp_isint)
+            return TropicalMatrix(result)
+        else:
+            raise Exception("Cannot perform tropical multiplication for type: " + str(type(other)))
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, int):
@@ -178,15 +177,6 @@ def tropical_matrix_0(n):
         values.append([tropical_0] * n)
     return TropicalMatrix(values)
 
-def kleene_star(F):
-    n = F.rows
-    result = tropical_matrix_1(n)
-    tmp_F = F
-    for i in range(1,n):
-        result += tmp_F
-        tmp_F *= tmp_F
-    return result
-
 def tropical_matrix_1(n):
     values = []
     for i in range(n):
@@ -196,7 +186,10 @@ def tropical_matrix_1(n):
     return TropicalMatrix(values)
 
 def generate_random_tropical_value(l,u,isint):
-    return TropicalValue(random.randint(l, u), isint)
+    value = random.randint(l, u)
+    if not isint and random.randint(1, 100)==1:
+        value = inf
+    return TropicalValue(value)
 
 def generate_random_tropical_matrix(n, l, u, isint):
     values = []
@@ -205,63 +198,4 @@ def generate_random_tropical_matrix(n, l, u, isint):
         for j in range(n):
             tmp_row.append(generate_random_tropical_value(l,u,isint))
         values.append(tmp_row)
-    return TropicalMatrix(values, True)
-
-
-def tropical_demo():
-    print("In tropical algebra we have:")
-
-    print("0 = " + str(tropical_0))
-    print("1 = " + str(tropical_1))
-
-    print("0(3x3) \n=\n" + str(tropical_matrix_0(3)))
-    print("1(3x3) \n=\n" + str(tropical_matrix_1(3)))
-
-    print("Examples of tropical operations:")
-
-    a = generate_random_tropical_value(-100, 100, False)
-    b = generate_random_tropical_value(-100, 100, False)
-
-    print("a) addition:")
-    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a+b))
-
-    print("b) multiplication:")
-    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a*b))
-
-    print("Examples of operations on tropical matrices:")
-
-    e = generate_random_tropical_matrix(3, -100, 100, True)
-    f = generate_random_tropical_matrix(3, -100, 100, False)
-
-    print("a) addition:")
-    print(e)
-    print("+")
-    print(f)
-    print("=")
-    print(e + f)
-
-    print("b) multiplication:")
-
-    print(e)
-    print("*")
-    print(f)
-    print("=")
-    print(e * f)
-
-    print("c) power")
-    print(e)
-    print("** 4\n=")
-    print(e ** 4)
-
-    print("d) adjoint multiplication:")
-
-    print(e)
-    print("@")
-    print(f)
-    print("=")
-    print(e @ f)
-
-    print("e) adjoint power")
-    print(e)
-    print("^3\n=")
-    print(e ^ 3)
+    return TropicalMatrix(values)

@@ -7,7 +7,67 @@ from attacks.kotov_ushakov_simple import *
 from attacks.kotov_ushakov import *
 from attacks.rudy_monico import *
 from attacks.isaac_kahrobaei import *
-from attacks.muanalifah_sergeev import *
+#from attacks.muanalifah_sergeev import *
+from protocols.grigorie_shpilrain_2014 import GrigorieShpilrain2014
+
+
+def tropical_demo():
+    print("In tropical algebra we have:")
+
+    print("0 = " + str(tropical_0))
+    print("1 = " + str(tropical_1))
+
+    print("0(3x3) \n=\n" + str(tropical_matrix_0(3)))
+    print("1(3x3) \n=\n" + str(tropical_matrix_1(3)))
+
+    print("Examples of tropical operations:")
+
+    a = generate_random_tropical_value(-100, 100, False)
+    b = generate_random_tropical_value(-100, 100, False)
+
+    print("a) addition:")
+    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a+b))
+
+    print("b) multiplication:")
+    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a*b))
+
+    print("Examples of operations on tropical matrices:")
+
+    e = generate_random_tropical_matrix(3, -100, 100, True)
+    f = generate_random_tropical_matrix(3, -100, 100, False)
+
+    print("a) addition:")
+    print(e)
+    print("+")
+    print(f)
+    print("=")
+    print(e + f)
+
+    print("b) multiplication:")
+
+    print(e)
+    print("*")
+    print(f)
+    print("=")
+    print(e * f)
+
+    print("c) power")
+    print(e)
+    print("** 4\n=")
+    print(e ** 4)
+
+    print("d) adjoint multiplication:")
+
+    print(e)
+    print("@")
+    print(f)
+    print("=")
+    print(e @ f)
+
+    print("e) adjoint power")
+    print(e)
+    print("^3\n=")
+    print(e ^ 3)
 
 #TODO: sprawdzić parametry protokołów w protocol_demo i attack_demo
 def protocol_demo(protocol):
@@ -28,8 +88,11 @@ def protocol_demo(protocol):
         g = 6
         print("g = " + str(g))
 
-        Alice = protocol(A, B, g)
-        Bob = protocol(A, B, g)
+        p_min = -1000
+        p_max = 1000
+
+        Alice = protocol(A, B, g, p_min, p_max)
+        Bob = protocol(A, B, g, p_min, p_max)
 
         print("n = " + str(Alice.n))
     elif protocol == GrigorieShpilrain2019:
@@ -72,8 +135,11 @@ def attack_demo(protocol, attack):
         g = 6
         print("g = " + str(g))
 
-        Alice = protocol(A, B, g)
-        Bob = protocol(A, B, g)
+        p_min = -1000
+        p_max = 1000
+
+        Alice = protocol(A, B, g, p_min, p_max)
+        Bob = protocol(A, B, g, p_min, p_max)
 
         print("n = " + str(Alice.n))
     elif protocol == GrigorieShpilrain2019:
@@ -90,7 +156,10 @@ def attack_demo(protocol, attack):
     attack_K = None
 
     if protocol == GrigorieShpilrain2014:
-        attack_K = attack(A, B, g, U, V)
+        if attack == kotov_ushakov_simple:
+            attack_K = attack(A, B, g, U, V)
+        elif attack == kotov_ushakov:
+            attack_K = attack(A, B, g, U, V, p_min, p_max)
     elif protocol == GrigorieShpilrain2019:
         attack_K = attack(A, B, U, V)
 
@@ -144,8 +213,7 @@ def tropicpy_demo():
             print("What attack do you want to see?")
             print("1. Rudy-Monico")
             print("2. Isaac-Kahrobaei")
-            print("3. Muanalifah-Sergeev")
-            print("4. None, just the protocol")
+            print("3. None, just the protocol")
 
             ans3 = input()
             try:
@@ -155,8 +223,6 @@ def tropicpy_demo():
                     attack = rudy_monico
                 elif ans3 == 2:
                     attack = isaac_kahrobaei
-                elif ans3 == 3:
-                    attack = muanalifah_sergeev
                 else:
                     attack = None
             except:

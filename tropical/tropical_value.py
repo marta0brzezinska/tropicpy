@@ -8,17 +8,12 @@ inf = "inf"
 
 
 class TropicalValue(object):
-
-    def __init__(self, value, isint=False):
+    def __init__(self, value):
         if value == inf or value == float(inf):
             self.is_num = False
-            self.is_int = isint
             self.value = float(inf)
-        elif isint and not isinstance(value, int):
-            raise Exception(str(value) + " is not an integer.")
         elif is_number(value):
             self.is_num = True
-            self.is_int = isint
             self.value = value
         else:
             raise Exception(str(value) + " is not an accurate tropical value.")
@@ -52,9 +47,9 @@ tropical_0 = TropicalValue(inf)
 tropical_1 = TropicalValue(0)
 
 
-def correct_tropical_value(value, isint=False):
+def correct_tropical_value(value):
     try:
-        TropicalValue(value, isint)
+        TropicalValue(value)
     except:
         return False
     else:
