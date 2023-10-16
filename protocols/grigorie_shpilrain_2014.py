@@ -5,7 +5,7 @@
 from tropical.tropical_matrix import *
 
 
-class GrigorieShpilrain2014():
+class GrigorieShpilrain2014:
 
     def __init__(self, A, B, g, p_min, p_max):
         if not isinstance(A, TropicalMatrix):
@@ -16,9 +16,11 @@ class GrigorieShpilrain2014():
             if A.rows != B.rows or A.columns != B.columns:
                 raise Exception("Matrices A and B are of different dimensions.")
             elif A.rows != A.columns:
-                raise Exception("Matrice A is not a square metrix.")
+                raise Exception("Matrix A is not a square matrix.")
             elif B.rows != B.columns:
-                raise Exception("Matrice B is not a square metrix.")
+                raise Exception("Matrix B is not a square matrix.")
+            elif A * B == B * A:
+                raise Exception("Matrices A and B do not satisfy the condition A*B!=B*A.")
 
             self.n = A.rows
             self.A = A
@@ -28,8 +30,8 @@ class GrigorieShpilrain2014():
             tmp_p1 = []
             tmp_p2 = []
             for i in range(g + 1):
-                tmp_p1.extend([generate_random_tropical_value(p_min, p_max, True)])
-                tmp_p2.extend([generate_random_tropical_value(p_min, p_max, True)])
+                tmp_p1.extend([generate_random_tropical_value(p_min, p_max)])
+                tmp_p2.extend([generate_random_tropical_value(p_min, p_max)])
 
             self._p1 = tmp_p1
             self._p2 = tmp_p2
@@ -46,8 +48,16 @@ class GrigorieShpilrain2014():
             self.m = None
             self._K = None
 
-    def send_message(self):
+    def send_message(self, prnt=False):
         self.m = self._p_1_A * self._p_2_B
+        if prnt:
+            print("p_1(x) coefficients:")
+            for el in self._p1:
+                print(el)
+            print("p_2(x) coefficients:")
+            for el in self._p2:
+                print(el)
+            print("Message:\n" + str(self.m))
         return self.m
 
     def set_Key(self, v):
@@ -58,37 +68,3 @@ class GrigorieShpilrain2014():
 
     def check_Key(self, check_K):
         return check_K == self._K
-
-
-def grigorie_shpilrain_2014_demo():
-    print("Example of Grigorie-Shpilrain (2014) protocol:")
-
-    n = 3
-    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
-    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
-
-    g = 6
-
-    print("Parameters:")
-    print("A = \n" + str(A))
-    print("B = \n" + str(B))
-    print("g = " + str(g))
-
-    Alice = GrigorieShpilrain2014(A, B, g)
-    Bob = GrigorieShpilrain2014(A, B, g)
-
-    print("n = " + str(Alice.n))
-
-    u = Alice.send_message()
-    v = Bob.send_message()
-
-    print("u = \n" + str(u))
-    print("v = \n" + str(v))
-
-    Alice.set_Key(v)
-    Bob.set_Key(u)
-
-    if Alice.get_Key() == Bob.get_Key():
-        print("Alice and Bob share a secret!")
-    else:
-        print("Something went wrong!")

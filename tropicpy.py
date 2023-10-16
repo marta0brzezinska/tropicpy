@@ -7,7 +7,6 @@ from attacks.kotov_ushakov_simple import *
 from attacks.kotov_ushakov import *
 from attacks.rudy_monico import *
 from attacks.isaac_kahrobaei import *
-#from attacks.muanalifah_sergeev import *
 from protocols.grigorie_shpilrain_2014 import GrigorieShpilrain2014
 
 
@@ -22,19 +21,19 @@ def tropical_demo():
 
     print("Examples of tropical operations:")
 
-    a = generate_random_tropical_value(-100, 100, False)
-    b = generate_random_tropical_value(-100, 100, False)
+    a = generate_random_tropical_value(-100, 100)
+    b = generate_random_tropical_value(-100, 100)
 
     print("a) addition:")
-    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a+b))
+    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a + b))
 
     print("b) multiplication:")
-    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a*b))
+    print("(" + str(a) + ")+(" + str(b) + ")=" + str(a * b))
 
     print("Examples of operations on tropical matrices:")
 
-    e = generate_random_tropical_matrix(3, -100, 100, True)
-    f = generate_random_tropical_matrix(3, -100, 100, False)
+    e = generate_random_tropical_matrix(3, -100, 100)
+    f = generate_random_tropical_matrix(3, -100, 100)
 
     print("a) addition:")
     print(e)
@@ -69,13 +68,13 @@ def tropical_demo():
     print("^3\n=")
     print(e ^ 3)
 
-#TODO: sprawdzić parametry protokołów w protocol_demo i attack_demo
+
 def protocol_demo(protocol):
     print("Example of " + protocol.__name__ + " protocol:")
 
     n = 3
-    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
-    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10)
+    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10)
 
     print("Parameters:")
     print("A = \n" + str(A))
@@ -85,14 +84,11 @@ def protocol_demo(protocol):
     Bob = None
 
     if protocol == GrigorieShpilrain2014:
-        g = 6
+        g = random.randint(1, 10)
         print("g = " + str(g))
 
-        p_min = -1000
-        p_max = 1000
-
-        Alice = protocol(A, B, g, p_min, p_max)
-        Bob = protocol(A, B, g, p_min, p_max)
+        Alice = protocol(A, B, g)
+        Bob = protocol(A, B, g)
 
         print("n = " + str(Alice.n))
     elif protocol == GrigorieShpilrain2019:
@@ -115,14 +111,14 @@ def protocol_demo(protocol):
     else:
         print("Something went wrong!")
 
-#TODO: return False if attack unsuccesfull
+
 def attack_demo(protocol, attack):
     print("Example of " + attack.__name__ + " attack:")
 
     n = 3
 
-    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
-    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10, True)
+    A = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10)
+    B = generate_random_tropical_matrix(n, -10 ** 10, 10 ** 10)
 
     print("Parameters:")
     print("A = \n" + str(A))
@@ -132,14 +128,11 @@ def attack_demo(protocol, attack):
     Bob = None
 
     if protocol == GrigorieShpilrain2014:
-        g = 6
+        g = random.randint(1, 10)
         print("g = " + str(g))
 
-        p_min = -1000
-        p_max = 1000
-
-        Alice = protocol(A, B, g, p_min, p_max)
-        Bob = protocol(A, B, g, p_min, p_max)
+        Alice = protocol(A, B, g, -1000, 1000)
+        Bob = protocol(A, B, g, -1000, 1000)
 
         print("n = " + str(Alice.n))
     elif protocol == GrigorieShpilrain2019:
@@ -151,15 +144,15 @@ def attack_demo(protocol, attack):
     U = Alice.send_message()
     V = Bob.send_message()
 
+    print("U:\n" + str(U))
+    print("V:\n" + str(V))
+
     Alice.set_Key(V)
 
     attack_K = None
 
     if protocol == GrigorieShpilrain2014:
-        if attack == kotov_ushakov_simple:
-            attack_K = attack(A, B, g, U, V)
-        elif attack == kotov_ushakov:
-            attack_K = attack(A, B, g, U, V, p_min, p_max)
+        attack_K = attack(A, B, g, U, V)
     elif protocol == GrigorieShpilrain2019:
         attack_K = attack(A, B, U, V)
 
@@ -168,6 +161,7 @@ def attack_demo(protocol, attack):
         print("K = \n" + str(attack_K))
     else:
         print("Key doesn't match..")
+
 
 def tropicpy_demo():
     protocol = None
@@ -234,10 +228,11 @@ def tropicpy_demo():
     except:
         print("Not a number.")
 
-    if attack != None and protocol != None:
-        attack_demo(protocol,attack)
-    elif protocol != None:
+    if attack is not None and protocol is not None:
+        attack_demo(protocol, attack)
+    elif protocol is not None:
         protocol_demo(protocol)
+
 
 if __name__ == "__main__":
     tropicpy_demo()

@@ -7,7 +7,7 @@ from tropical.tropical_value import *
 import random
 
 
-class TropicalMatrix():
+class TropicalMatrix:
     def __init__(self, values):
 
         tmp_rows = len(values)
@@ -105,10 +105,10 @@ class TropicalMatrix():
                 tmp_row = []
                 for col_no in range(self.columns):
                     times = list(map(TropicalValue.__mul__, row, other_columns[col_no]))
-                    sum = tropical_0
+                    tropical_sum = tropical_0
                     for el in times:
-                        sum += el
-                    tmp_row.append(sum)
+                        tropical_sum += el
+                    tmp_row.append(tropical_sum)
                 result.append(tmp_row)
             return TropicalMatrix(result)
         elif isinstance(other, TropicalValue):
@@ -158,7 +158,8 @@ def semidirect_product_1st(A, B, C, D):
 def semidirect_product_2nd(A, B, C, D):
     return B @ D
 
-#todo: square-and-multiply method?
+
+# originally square-and-multiply method
 def semidirect_power_1st(A, B, n):
     if n == 1:
         return A
@@ -177,6 +178,7 @@ def tropical_matrix_0(n):
         values.append([tropical_0] * n)
     return TropicalMatrix(values)
 
+
 def tropical_matrix_1(n):
     values = []
     for i in range(n):
@@ -185,17 +187,19 @@ def tropical_matrix_1(n):
         values.append(tmp_row)
     return TropicalMatrix(values)
 
-def generate_random_tropical_value(l,u,isint):
+
+def generate_random_tropical_value(l, u):
     value = random.randint(l, u)
-    if not isint and random.randint(1, 100)==1:
+    if random.randint(1, 100) == 1:
         value = inf
     return TropicalValue(value)
 
-def generate_random_tropical_matrix(n, l, u, isint):
+
+def generate_random_tropical_matrix(n, l, u):
     values = []
     for i in range(n):
         tmp_row = []
         for j in range(n):
-            tmp_row.append(generate_random_tropical_value(l,u,isint))
+            tmp_row.append(generate_random_tropical_value(l, u))
         values.append(tmp_row)
     return TropicalMatrix(values)

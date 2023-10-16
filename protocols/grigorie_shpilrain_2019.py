@@ -5,7 +5,7 @@
 from tropical.tropical_matrix import *
 
 
-class GrigorieShpilrain2019():
+class GrigorieShpilrain2019:
 
     def __init__(self, M, H):
         if not isinstance(M, TropicalMatrix):
@@ -16,9 +16,9 @@ class GrigorieShpilrain2019():
             if M.rows != H.rows or M.columns != H.columns:
                 raise Exception("Matrices M and H are of different dimensions.")
             elif M.rows != M.columns:
-                raise Exception("Matrice M is not a square metrix.")
+                raise Exception("Matrix M is not a square matrix.")
             elif H.rows != H.columns:
-                raise Exception("Matrice H is not a square metrix.")
+                raise Exception("Matrix H is not a square matrix.")
 
             self.k = M.rows
             self.M = M
@@ -43,33 +43,3 @@ class GrigorieShpilrain2019():
 
     def check_Key(self, check_K):
         return check_K == self._K
-
-def grigorie_shpilrain_2019_demo():
-    print("Example of Grigorie-Shpilrain (2019) protocol:")
-
-    k = 3
-    M = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
-    H = generate_random_tropical_matrix(k, -10 ** 10, 10 ** 10, True)
-
-    print("Parameters:")
-    print("M = \n" + str(M))
-    print("H = \n" + str(H))
-
-    Alice = GrigorieShpilrain2019(M, H)
-    Bob = GrigorieShpilrain2019(M, H)
-
-    print("k = " + str(Alice.k))
-
-    A = Alice.send_message()
-    B = Bob.send_message()
-
-    print("A = \n" + str(A))
-    print("B = \n" + str(B))
-
-    Alice.set_Key(B)
-    Bob.set_Key(A)
-
-    if Alice.check_Key(Bob.get_Key()):
-        print("Alice and Bob share a secret!")
-    else:
-        print("Something went wrong!")
