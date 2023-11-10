@@ -3,9 +3,8 @@
 
 """
 
-from tropical.tropical_value import *
+from tropicpy.tropical.tropical_value import *
 import random
-
 
 class TropicalMatrix:
     def __init__(self, values):

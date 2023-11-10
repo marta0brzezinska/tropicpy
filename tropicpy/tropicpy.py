@@ -2,12 +2,12 @@
 
 
 """
-
 from attacks.kotov_ushakov_simple import *
 from attacks.kotov_ushakov import *
+from protocols.grigorie_shpilrain_2019 import *
 from attacks.rudy_monico import *
 from attacks.isaac_kahrobaei import *
-from protocols.grigorie_shpilrain_2014 import GrigorieShpilrain2014
+from protocols.grigorie_shpilrain_2014 import *
 
 
 def tropical_demo():
@@ -87,8 +87,8 @@ def protocol_demo(protocol):
         g = random.randint(1, 10)
         print("g = " + str(g))
 
-        Alice = protocol(A, B, g)
-        Bob = protocol(A, B, g)
+        Alice = protocol(A, B, g, -1000, 1000)
+        Bob = protocol(A, B, g, -1000, 1000)
 
         print("n = " + str(Alice.n))
     elif protocol == GrigorieShpilrain2019:
@@ -152,7 +152,10 @@ def attack_demo(protocol, attack):
     attack_K = None
 
     if protocol == GrigorieShpilrain2014:
-        attack_K = attack(A, B, g, U, V)
+        if attack == kotov_ushakov_simple:
+            attack_K = attack(A, B, g, U, V)
+        elif attack == kotov_ushakov:
+            attack_K = attack(A, B, g, U, V, -1000)
     elif protocol == GrigorieShpilrain2019:
         attack_K = attack(A, B, U, V)
 
@@ -160,7 +163,9 @@ def attack_demo(protocol, attack):
         print("Key was found!")
         print("K = \n" + str(attack_K))
     else:
-        print("Key doesn't match..")
+        print("Keys don't match..")
+        print("Protocol key:\n" + str(Alice.get_Key()))
+        print("Attack key:\n" + str(attack_K))
 
 
 def tropicpy_demo():

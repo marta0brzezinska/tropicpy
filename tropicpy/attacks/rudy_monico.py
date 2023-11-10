@@ -1,7 +1,6 @@
 """
 
 """
-from protocols.grigorie_shpilrain_2019 import *
 
 
 def rudy_monico(M, H, A, B):

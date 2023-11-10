@@ -2,18 +2,19 @@
 
 
 """
-from attacks.attacks_utils import *
+from tropicpy.attacks.attacks_utils import *
 
 
-def kotov_ushakov(A, B, g, U, V):
+def kotov_ushakov(A, B, g, U, V, p_min):
     n = A.rows
     data = []
 
     for i in range(g + 1):
         for j in range(g + 1):
-            matrix_min = min_of_matrix_difference((A ** i) * (B ** j), U)
-            result = {"i": i, "j": j, "minval": matrix_min[0], "inds": matrix_min[1]}
-            data.append(result)
+            matrix_min = min_of_matrix_difference((A ** i) * (B ** j), U * TropicalValue((-2) * -1000))
+            if matrix_min[0].value <= 0:
+                result = {"i": i, "j": j, "minval": matrix_min[0], "inds": matrix_min[1]}
+                data.append(result)
 
     inds = [result["inds"] for result in data]
     C = minimal_set_covers(inds)
@@ -26,8 +27,7 @@ def kotov_ushakov(A, B, g, U, V):
     for ij in minimal_covers_ij:
         result = simplex(make_simplex_matrix(data, g, ij))
         if result:
-            polys = [[int(result[i]) for i in range(g + 1)],
-                     [int(result[g + 1 + i]) for i in range(g + 1)]]
+            polys = [[int(result[i] + p_min) for i in range(g + 1)], [int(result[g + 1 + i] + p_min) for i in range(g + 1)]]
             p1_A = tropical_matrix_0(n)
             p2_B = tropical_matrix_0(n)
             for (el1, el2, i) in zip(polys[0], polys[1], range(g + 1)):

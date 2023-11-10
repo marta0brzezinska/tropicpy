@@ -2,7 +2,7 @@
 
 
 """
-from tropical.tropical_matrix import *
+from tropicpy.tropical.tropical_matrix import *
 
 
 class GrigorieShpilrain2014:

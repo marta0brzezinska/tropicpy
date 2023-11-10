@@ -2,7 +2,7 @@
 
 
 """
-from tropical.tropical_matrix import *
+from tropicpy.tropical.tropical_matrix import *
 
 
 def value_difference(a, b):
@@ -149,6 +149,7 @@ def minimal_set_covers(data):
 
     for curr_set in sets:
         other_sets_union = list_union([other_cover for other_cover in sets if other_cover != curr_set])
+        l = [ind for ind in curr_set if ind not in other_sets_union]
         if len([ind for ind in curr_set if ind not in other_sets_union]) != 0:
             minimal_cover.append(curr_set)
 

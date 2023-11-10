@@ -3,7 +3,7 @@
 
 """
 
-from attacks.attacks_utils import *
+from tropicpy.attacks.attacks_utils import *
 
 
 def isaac_kahrobaei(M, H, A, B):

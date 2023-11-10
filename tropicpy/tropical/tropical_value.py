@@ -2,7 +2,7 @@
 
 
 """
-from tropical.tropical_utils import *
+from tropicpy.tropical.tropical_utils import *
 
 inf = "inf"
 

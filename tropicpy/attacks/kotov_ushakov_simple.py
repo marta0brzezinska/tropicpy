@@ -2,7 +2,7 @@
 
 
 """
-from attacks.attacks_utils import *
+from tropicpy.attacks.attacks_utils import *
 
 
 def kotov_ushakov_simple(A, B, g, U, V):
